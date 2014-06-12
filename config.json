@@ -1,0 +1,8 @@
+{
+    "hostname": "localhost",
+    "port":"9090",
+    "indexname": "docu",
+    "protocol": "http",
+    "login": "documentation",
+    "key": "1811b41422a1474a3d91a77a69de7c77"
+}

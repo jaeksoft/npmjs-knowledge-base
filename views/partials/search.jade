@@ -1,0 +1,56 @@
+div#wrapper(class='{{active}}',ng-controller='searchController')
+    // Sidebar
+    #sidebar-wrapper
+        header.header
+            a.logo(href='index.html')
+                img.icon.col-centered(src='images/oss_logo.png')
+            ul.sidebar-nav
+                li.treeview.action(class='{{paging}}')
+                    a(href='#')
+                        i.fa.fa-folder
+                        span.facet-title Category
+                    div.treeview-menu(style='display: block;',ng-repeat='category in categories',ng-model='categories')
+                        div.checkbox
+                            label(class='checkbox.inline')
+                                input(type='checkbox', ng-click='selectFilter(category)',ng-checked='isChecked(category)')
+                                | {{category.term}}
+                                br
+
+
+
+    // Page content
+    #page-content-wrapper
+        .content-header
+            .row
+                .col-md-12
+                    div.side(ng-hide='true')
+                        img(src='images/side.png',ng-click='showSide()')
+
+                    form.sidebar-form.col-centered(ng-submit="submit()")
+                        .input-group
+                            input.form-control(id='q',type='text',autocomplete='off',placeholder='Search for documentation',typeahead='suggestions for suggestions in getAutocompletion($viewValue)', typeahead-loading='loadingLocations',ng-model='q',typeahead-on-select='onSelect(q)')
+                            span.input-group-btn
+                                button#search-btn.btn.btn-flat(type='submit', name='seach')
+                                    i.fa.fa-search
+                    span.result-text(class='{{paging}}') {{numFound}} Results found
+
+        .page-content.inset
+            .row
+                .col-md-12
+                    loading
+                    ul.timeline
+                        li
+                            .timeline-item(ng-repeat='document in documents',ng-model='menus')
+                                h3.timeline-header
+                                    a(href='{{document.fields[0].values[0]}}') {{document.snippets[1].values[0]}}
+                                .timeline-body(ng-bind-html-unsafe="document.snippets[0].values[0]")
+                                    | {{document.snippets[0].values[0]}}
+                                .timeline-footer
+                                    a.btn.btn-primary.btn-xs(href='{{document.fields[0].values[0]}}',target='_blank') Read more
+
+                    .pagination-div
+                        ul.pagination(class='{{paging}}')
+                            li(ng-class='DisablePrevPage()')
+                                a.pointer(ng-click='prevPage()',ng-class='DisablePrevPage()') « Prev
+                            li(ng-class='DisableNextPage()')
+                                a.pointer(ng-click='nextPage()',ng-class='DisableNextPage()') Next »
