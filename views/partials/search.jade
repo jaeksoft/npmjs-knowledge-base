@@ -17,7 +17,6 @@ div#wrapper(class='{{active}}',ng-controller='searchController')
                                 br
 
 
-
     // Page content
     #page-content-wrapper
         .content-header
@@ -32,7 +31,8 @@ div#wrapper(class='{{active}}',ng-controller='searchController')
                             span.input-group-btn
                                 button#search-btn.btn.btn-flat(type='submit', name='seach')
                                     i.fa.fa-search
-                    span.result-text(class='{{paging}}') {{numFound}} Results found
+                    span(class='{{paging}}') {{numFound}} Results found
+                    span(class='alert alert-danger',ng-hide='isup') {{error}}
 
         .page-content.inset
             .row

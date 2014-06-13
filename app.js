@@ -49,6 +49,7 @@ app.get('/partials/:name', routes.partials);
 app.get('/api/search/:query/:paging/:filter', api.search);
 app.get('/api/searchFacet/:query', api.searchFacet);
 app.get('/api/autocomplete/:query', api.autocomplete);
+app.get('/api/isup', api.isServerUP);
 // redirect all others to the index (HTML5 history)
 app.get('*', routes.index);
 

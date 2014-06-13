@@ -10,13 +10,33 @@ var client = oss.createClient({
     key: nconf.get('key')
 });
 var indexname = nconf.get('indexname');
+var serverURL = nconf.get('protocol') + '://' + nconf.get('hostname') + ':' + nconf.get('port');
 exports.autocomplete = function (autocompleteRequest, response) {
-    var autoCompleteURL = nconf.get('protocol')+'://'+nconf.get('hostname')+':'+nconf.get('port')+'/autocompletion?use='+nconf.get('indexname')+'&login='+nconf.get('login')+'&key='+nconf.get('key')+'&query=';
+    var autoCompleteURL = serverURL + '/autocompletion?use=' + nconf.get('indexname') + '&login=' + nconf.get('login') + '&key=' + nconf.get('key') + '&query=';
     http_request(autoCompleteURL + autocompleteRequest.params.query, function (error, res, body) {
-        response.json({
-            results: body.split('\n')
-
-        });
+        if (typeof body != 'undefined' && res.statusCode == 200) {
+            response.json({
+                results: body.split('\n')
+            });
+        } else {
+            response.json({
+                results: ''
+            });
+        }
+    });
+};
+exports.isServerUP = function (request, response) {
+    var moniterURL = serverURL+'/services/rest/monitor/json?'+ '&login=' + nconf.get('login') + '&key=' + nconf.get('key');
+    http_request(moniterURL, function (error, res, body) {
+        if (typeof res != 'undefined' && res.statusCode == 200) {
+            response.json({
+                status: body
+            });
+        } else {
+            response.json({
+                status: false
+            });
+        }
     });
 };
 

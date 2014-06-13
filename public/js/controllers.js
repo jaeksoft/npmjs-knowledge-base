@@ -3,23 +3,23 @@
 /* Controllers */
 
 angular.module('KnowledgeBase.controllers', ['ui.bootstrap']).
-    controller('AppCtrl', function ($scope, $http) {
-
+    controller('searchController', ['$scope', '$routeParams', '$http', '$window', '$location', function ($scope, $routeParams, $http, $window, $location) {
+        $scope.isup = false;
+        $scope.error ='';
         $http({
             method: 'GET',
-            url: '/api/name'
-        }).
-            success(function (data, status, headers, config) {
-                $scope.name = data.name;
-            }).
-            error(function (data, status, headers, config) {
-                $scope.name = 'Error!';
-            });
-
-    }).
-
-
-    controller('searchController', ['$scope', '$routeParams', '$http', '$window', function ($scope, $routeParams, $http, $window) {
+            url: '/api/isup'
+        }).success(function (data, status, headers, config) {
+            var res = JSON.parse(data.status);
+            if (res.successful == true) {
+                $scope.isup = true;
+            }else {
+                $scope.isup = false;
+                $scope.error ='OpenSearchServer is down :( ';
+            }
+        }).error(function (data, status, headers, config) {
+            $scope.isup = false;
+        });
         var init = function () {
             $scope.isDisabled = '';
             $scope.loading = false;
@@ -66,22 +66,18 @@ angular.module('KnowledgeBase.controllers', ['ui.bootstrap']).
             $http({
                 method: 'GET',
                 url: url
-            }).
-                success(function (data, status, headers, config) {
-                    $scope.numFound = data.results.numFound;
-                    $scope.documents = data.results.documents;
-                    $scope.loading = false;
-                    $scope.paging = '';
+            }).success(function (data, status, headers, config) {
+                $scope.numFound = data.results.numFound;
+                $scope.documents = data.results.documents;
+                $scope.loading = false;
+                $scope.paging = '';
+                //Gives issue check it out, No workaround till now https://github.com/angular/angular.js/issues/3924
+                var targetUrl = "/search?q=" + $scope.q;
+                window.history.pushState({url: "" + targetUrl + ""}, "Documentation", targetUrl);
 
-                    //Gives issue check it out, No workaround till now https://github.com/angular/angular.js/issues/3924
-                    var targetUrl = "/search?q=" + $scope.q;
-                    window.history.pushState({url: "" + targetUrl + ""}, "Documentation", targetUrl);
-
-
-                }).
-                error(function (data, status, headers, config) {
-                    $scope.name = 'Error!';
-                });
+            }).error(function (data, status, headers, config) {
+                $scope.error = 'Something went wrong!';
+            });
             $http({
                 method: 'GET',
                 url: urlFacet
@@ -90,7 +86,7 @@ angular.module('KnowledgeBase.controllers', ['ui.bootstrap']).
                     $scope.categories = data.results.facets[0].terms;
                 }).
                 error(function (data, status, headers, config) {
-                    $scope.name = 'Error!';
+                    $scope.error = 'Something went wrong!';
                 });
         };
 
@@ -107,22 +103,17 @@ angular.module('KnowledgeBase.controllers', ['ui.bootstrap']).
             $http({
                 method: 'GET',
                 url: url
-            }).
-                success(function (data, status, headers, config) {
-                    $scope.numFound = data.results.numFound;
-                    $scope.documents = data.results.documents;
-                    $scope.loading = false;
-                    $scope.paging = '';
-
-                    //Gives issue check it out, No workaround till now https://github.com/angular/angular.js/issues/3924
-                    var targetUrl = "/search?q=" + $scope.q;
-                    window.history.pushState({url: "" + targetUrl + ""}, "Documentation", targetUrl);
-
-
-                }).
-                error(function (data, status, headers, config) {
-                    $scope.name = 'Error!';
-                });
+            }).success(function (data, status, headers, config) {
+                $scope.numFound = data.results.numFound;
+                $scope.documents = data.results.documents;
+                $scope.loading = false;
+                $scope.paging = '';
+                //Gives issue check it out, No workaround till now https://github.com/angular/angular.js/issues/3924
+                var targetUrl = "/search?q=" + $scope.q;
+                window.history.pushState({url: "" + targetUrl + ""}, "Documentation", targetUrl);
+            }).error(function (data, status, headers, config) {
+                $scope.error = 'Something went wrong!';
+            });
             $http({
                 method: 'GET',
                 url: urlFacet
@@ -131,7 +122,7 @@ angular.module('KnowledgeBase.controllers', ['ui.bootstrap']).
                     $scope.categories = data.results.facets[0].terms;
                 }).
                 error(function (data, status, headers, config) {
-                    $scope.name = 'Error!';
+                    $scope.error = 'Something went wrong!';
                 });
 
         };
